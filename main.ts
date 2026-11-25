@@ -1,17 +1,13 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const text = "Here lies someone who swore they didn't need to write down the password because they'd definitely remember it.";
-const characterCount = [...text].length;
-if (characterCount < 1 || characterCount > 150 || /[\r\n\u2028\u2029]/.test(text)) {
-  throw new Error("Entry must contain 1 to 150 characters on a single line");
+if (text.length < 1 || text.length > 150 || /[\r\n]/.test(text)) {
+  throw new Error("Entry must be a single line of 1 to 150 characters");
 }
 
-const outputPath = fileURLToPath(new URL("/output/entry.txt", import.meta.url));
+mkdirSync("/output", { recursive: true });
 const expected = Buffer.from(text + "\n", "utf8");
-await mkdir(dirname(outputPath), { recursive: true });
-await writeFile(outputPath, expected);
-if (!(await readFile(outputPath)).equals(expected)) {
-  throw new Error("Written entry does not match the expected text");
+writeFileSync("/output/entry.txt", expected);
+if (!readFileSync("/output/entry.txt").equals(expected)) {
+  throw new Error("Written entry does not match the expected bytes");
 }
