@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const text = "Here lies someone who swore they didn't need to write down the password because they'd definitely remember it.";
 const characterCount = [...text].length;
-if (characterCount < 1 || characterCount > 150 || /[\r\n]/.test(text)) {
-  throw new Error("Entry must be a single line of 1 to 150 characters");
+if (characterCount < 1 || characterCount > 150 || /[\r\n\u2028\u2029]/.test(text)) {
+  throw new Error("Entry must contain 1 to 150 characters on a single line");
 }
 
 const outputPath = fileURLToPath(new URL("/output/entry.txt", import.meta.url));
